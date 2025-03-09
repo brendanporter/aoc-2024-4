@@ -65,9 +65,9 @@ fn find_xmas(input: &str) -> i32 {
     }
 
     let text: [char; 3] = ['M', 'A', 'S'];
-    let mut count: i32;
+    let mut count: i32 = 0;
 
-    for (i, c) in candidates.into_iter().enumerate() {
+    for mut c in candidates {
         for y in -1..=1 {
             if c.pos_y <= 3 && y <= 0 {
                 // skip top
@@ -90,8 +90,11 @@ fn find_xmas(input: &str) -> i32 {
                 if letters[(c.pos_y + y) as usize][(c.pos_x + x) as usize].value == c.next {
                     // need to check the next couple in this direction and inrement counter if
                     // satisfied
-                    if letters[c.pos_y += y * 2][c.pos_x += x * 2] == 'A' {
-                        if letters[c.pos_y += y * 3][c.pos_x += x * 3] == 'S' {
+                    if letters[(c.pos_y + y * 2) as usize][(c.pos_x + x * 2) as usize].value == 'A'
+                    {
+                        if letters[(c.pos_y + (y * 3)) as usize][(c.pos_x + (x * 3)) as usize].value
+                            == 'S'
+                        {
                             c.counter += 1
                         }
                     }
@@ -99,9 +102,12 @@ fn find_xmas(input: &str) -> i32 {
             }
         }
 
+        count += c.counter
+
         // count += check_neighbors(c, letters)
     }
 
+    count
     // traverse text forward, backward, up, down, diagonal?
     // traverse text once, tracking all permutations that could become XMAS?
     //
