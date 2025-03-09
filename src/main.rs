@@ -87,7 +87,7 @@ fn find_xmas(input: &str) -> i32 {
                     continue;
                 }
 
-                if letters[c.pos_y += y][c.pos_x += x].value == c.next {
+                if letters[(c.pos_y + y) as usize][(c.pos_x + x) as usize].value == c.next {
                     // need to check the next couple in this direction and inrement counter if
                     // satisfied
                     if letters[c.pos_y += y * 2][c.pos_x += x * 2] == 'A' {
