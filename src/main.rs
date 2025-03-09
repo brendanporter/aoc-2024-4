@@ -46,7 +46,7 @@ fn find_xmas(input: &str) -> i32 {
                 candidates.push(Candidate {
                     pos_x: x as i32,
                     pos_y: y as i32,
-                    next: 'x',
+                    next: 'X',
                     counter: 0,
                 })
             } else {
