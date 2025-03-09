@@ -72,45 +72,59 @@ fn find_xmas(input: &str) -> i32 {
 
     for mut c in candidates {
         x_count += 1;
-        for y in -1..=1 {
-            if c.pos_y <= 3 && y <= 0 {
-                // skip top
-                continue;
-            }
-            if c.pos_y <= letters.len() as i32 - 1 && y >= 0 {
-                // skip bottom
-                continue;
-            }
-            for x in -1..=1 {
-                if c.pos_x <= 3 && x < 0 {
-                    // skip left
-                    continue;
-                }
-                if c.pos_x <= (letters[0].len() - 1) as i32 {
-                    // skip right
-                    continue;
-                }
 
-                let row = letters.get((c.pos_y + y) as usize);
-                if row.is_some() {
-                    let col = row.unwrap().get((c.pos_x + x) as usize);
-                    if col.is_some() {
-                        if col.unwrap().value == c.next {
-                            // need to check the next couple in this direction and inrement counter if
-                            // satisfied
-                            if letters[(c.pos_y + y * 2) as usize][(c.pos_x + x * 2) as usize].value
-                                == 'A'
-                            {
-                                if letters[(c.pos_y + (y * 3)) as usize]
-                                    [(c.pos_x + (x * 3)) as usize]
-                                    .value
-                                    == 'S'
-                                {
-                                    c.counter += 1
-                                }
-                            }
-                        }
+        for y_offset in -1..=1 as i32 {
+            for x_offset in -1..=1 as i32 {
+                for (step, next_letter) in text.into_iter().enumerate() {
+                    let x_loc = (c.pos_y + (x_offset * step as i32)) as usize;
+                    let row = letters.get(x_loc);
+                    if row.is_none() {
+                        continue;
                     }
+                    let y_loc = (c.pos_y + (y_offset * step as i32)) as usize;
+                    let col = row.unwrap().get(y_loc);
+                    if col.is_none() {
+                        continue;
+                    }
+                    let letter = col.unwrap();
+
+                    if letter.value != next_letter {
+                        continue;
+                    }
+
+                    println!(
+                        "for candidate at {},{}, letter at {},{} is '{}', looking for '{}'",
+                        c.pos_x, c.pos_y, x_loc, y_loc, letter.value, next_letter
+                    );
+
+                    if letter.value == 'S' {
+                        c.counter += 1;
+                    }
+                    // need to check the next couple in this direction and inrement counter if
+                    // satisfied
+                    //
+                    // let row_a = letters.get((c.pos_y + (y_offset * 2)) as usize);
+                    // if row_a.is_none() {
+                    //     continue;
+                    // }
+                    // let col_a = row.unwrap().get((c.pos_x + (x_offset * 2)) as usize);
+                    // if col_a.is_none() {
+                    //     continue;
+                    // }
+
+                    // if letters[(c.pos_y + (y_offset * 2)) as usize]
+                    //     [(c.pos_x + (x_offset * 2)) as usize]
+                    //     .value
+                    //     == 'A'
+                    // {
+                    //     if letters[(c.pos_y + (y_offset * 3)) as usize]
+                    //         [(c.pos_x + (x_offset * 3)) as usize]
+                    //         .value
+                    //         == 'S'
+                    //     {
+                    //         c.counter += 1
+                    //     }
+                    // }
                 }
             }
         }
