@@ -41,7 +41,6 @@ fn find_xmas(input: &str) -> i32 {
     // read text into memory
     for (y, line) in input.lines().enumerate() {
         let mut line_letters: Vec<Letter> = Vec::new();
-
         for (x, char) in line.chars().enumerate() {
             if char == 'x' {
                 candidates.push(Candidate {
@@ -59,12 +58,13 @@ fn find_xmas(input: &str) -> i32 {
             }
 
             if x == line.len() - 1 {
-                letters.push(line_letters)
+                letters.push(line_letters);
+                break;
             }
         }
     }
 
-    let text: [char; 3] = ['M', 'A', 'S'];
+    let _text: [char; 3] = ['M', 'A', 'S'];
     let mut count: i32 = 0;
 
     for mut c in candidates {
