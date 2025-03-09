@@ -49,13 +49,12 @@ fn find_xmas(input: &str) -> i32 {
                     next: 'M',
                     counter: 0,
                 })
-            } else {
-                line_letters.push(Letter {
-                    pos_x: x as i32,
-                    pos_y: y as i32,
-                    value: char,
-                })
             }
+            line_letters.push(Letter {
+                pos_x: x as i32,
+                pos_y: y as i32,
+                value: char,
+            });
 
             if x == line.len() - 1 {
                 letters.push(line_letters);
@@ -73,29 +72,36 @@ fn find_xmas(input: &str) -> i32 {
     for mut c in candidates {
         x_count += 1;
 
+        // println!("checking candidate {} at {},{}", i, c.pos_x, c.pos_y);
         for y_offset in -1..=1 as i32 {
             for x_offset in -1..=1 as i32 {
+                if y_offset == 0 && x_offset == 0 {
+                    continue;
+                }
+
                 for (step, next_letter) in text.into_iter().enumerate() {
-                    let x_loc = (c.pos_x + (x_offset * step as i32)) as usize;
-                    let row = letters.get(x_loc);
+                    let y_loc = (c.pos_y + (y_offset * (step + 1) as i32)) as usize;
+                    let row = letters.get(y_loc);
                     if row.is_none() {
                         continue;
                     }
-                    let y_loc = (c.pos_y + (y_offset * step as i32)) as usize;
-                    let col = row.unwrap().get(y_loc);
+                    let x_loc = (c.pos_x + (x_offset * (step + 1) as i32)) as usize;
+                    let col = row.unwrap().get(x_loc);
                     if col.is_none() {
                         continue;
                     }
                     let letter = col.unwrap();
 
+                    // println!("checking for {} at {},{}", next_letter, x_loc, y_loc);
+
                     if letter.value != next_letter {
-                        continue;
+                        break;
                     }
 
-                    println!(
-                        "for candidate at {},{}, letter at {},{} is '{}', looking for '{}'",
-                        c.pos_x, c.pos_y, x_loc, y_loc, letter.value, next_letter
-                    );
+                    // println!(
+                    //     "for candidate at {},{}, letter at {},{} is '{}', looking for '{}'",
+                    //     c.pos_x, c.pos_y, x_loc, y_loc, letter.value, next_letter
+                    // );
 
                     if letter.value == 'S' {
                         c.counter += 1;
