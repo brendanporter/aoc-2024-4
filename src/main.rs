@@ -31,7 +31,7 @@ fn main() {
         .expect("cannot read the file");
 
     let count = find_xmas(contents.as_str());
-    print!("found {} xmas", count)
+    println!("found {} xmas", count)
 }
 
 fn find_xmas(input: &str) -> i32 {
@@ -42,11 +42,11 @@ fn find_xmas(input: &str) -> i32 {
     for (y, line) in input.lines().enumerate() {
         let mut line_letters: Vec<Letter> = Vec::new();
         for (x, char) in line.chars().enumerate() {
-            if char == 'x' {
+            if char == 'X' {
                 candidates.push(Candidate {
                     pos_x: x as i32,
                     pos_y: y as i32,
-                    next: 'X',
+                    next: 'M',
                     counter: 0,
                 })
             } else {
@@ -64,10 +64,14 @@ fn find_xmas(input: &str) -> i32 {
         }
     }
 
-    let _text: [char; 3] = ['M', 'A', 'S'];
+    let text: [char; 3] = ['M', 'A', 'S'];
     let mut count: i32 = 0;
+    let mut x_count: i32 = 0;
+
+    // println!("count of candidates: {}", candidates.len());
 
     for mut c in candidates {
+        x_count += 1;
         for y in -1..=1 {
             if c.pos_y <= 3 && y <= 0 {
                 // skip top
@@ -82,20 +86,29 @@ fn find_xmas(input: &str) -> i32 {
                     // skip left
                     continue;
                 }
-                if c.pos_x <= letters[0].len() as i32 {
+                if c.pos_x <= (letters[0].len() - 1) as i32 {
                     // skip right
                     continue;
                 }
 
-                if letters[(c.pos_y + y) as usize][(c.pos_x + x) as usize].value == c.next {
-                    // need to check the next couple in this direction and inrement counter if
-                    // satisfied
-                    if letters[(c.pos_y + y * 2) as usize][(c.pos_x + x * 2) as usize].value == 'A'
-                    {
-                        if letters[(c.pos_y + (y * 3)) as usize][(c.pos_x + (x * 3)) as usize].value
-                            == 'S'
-                        {
-                            c.counter += 1
+                let row = letters.get((c.pos_y + y) as usize);
+                if row.is_some() {
+                    let col = row.unwrap().get((c.pos_x + x) as usize);
+                    if col.is_some() {
+                        if col.unwrap().value == c.next {
+                            // need to check the next couple in this direction and inrement counter if
+                            // satisfied
+                            if letters[(c.pos_y + y * 2) as usize][(c.pos_x + x * 2) as usize].value
+                                == 'A'
+                            {
+                                if letters[(c.pos_y + (y * 3)) as usize]
+                                    [(c.pos_x + (x * 3)) as usize]
+                                    .value
+                                    == 'S'
+                                {
+                                    c.counter += 1
+                                }
+                            }
                         }
                     }
                 }
@@ -106,6 +119,8 @@ fn find_xmas(input: &str) -> i32 {
 
         // count += check_neighbors(c, letters)
     }
+
+    println!("Number of X's found: {}", x_count);
 
     count
     // traverse text forward, backward, up, down, diagonal?
